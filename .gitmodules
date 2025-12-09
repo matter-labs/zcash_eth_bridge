@@ -1,0 +1,3 @@
+[submodule "zebra"]
+	path = zebra
+	url = git@github.com:matter-labs/zebra.git
