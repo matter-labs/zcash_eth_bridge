@@ -11,17 +11,16 @@ Additionally, it provides a demo flow for bridging funds from ZCash to Ethereum 
 
 ## Running the demo
 
-
-First, build the project using `./build.sh`
-Then, in 3 different terminals, run:
-
 ```sh
+# Before running, build the project
+./build.sh
+
 # 1st terminal
 ./run_zcash.sh
 # 2nd terminal
 ./run_anvil.sh
 # 3rd terminal
-./run_zcash.sh
+./run_bridge.sh
 ```
 
 After everything is started, you can run the demo that would test whether bridging works as intended.
@@ -74,6 +73,22 @@ Examples of incompleteness:
 
 This implementation is not meant and not suitable for any kind of production use, and serves a demonstration purpose only.
 Use at your own risk.
+
+## Troubleshooting
+
+### `anvil` unable to load state
+
+Example error: `invalid value 'anvil-state.json' for '--load-state <PATH>'`
+
+Fix: make sure that you have the latest stable `anvil` version installed (`1.5.0-stable` at the time of writing).
+
+### C++ headers errors on MacOS
+
+If you get compilation errors on MacOS stating that some standard C++ headers cannot be found, you can try fixing it as follows:
+
+```sh
+export CXXFLAGS="-isystem $(xcrun --show-sdk-path)/usr/include/c++/v1"
+```
 
 ## Acknowledgements
 
