@@ -3,6 +3,8 @@
 This project presents a prototype of a trustless bridge between ZCash and Ethereum.
 Additionally, it provides a demo flow for bridging funds from ZCash to Ethereum and back.
 
+![demo](./assets/demo.png)
+
 ## Prerequisites
 
 - [`zebra` general requirements](https://github.com/ZcashFoundation/zebra?tab=readme-ov-file#manual-install)
@@ -46,7 +48,7 @@ As soon as at least 1 block is generated on both chains, a state update is prepa
 
 In order to make this project possible, a new TZE is created. Definition of the TZE can be found [here](https://github.com/matter-labs/librustzcash/tree/popzxc-prototype/zcash_extensions/src).
 
-TZE ID: 2 (number chosen to not collide with previously proposed TZE implementation)
+TZE ID: 2
 
 Modes:
 
