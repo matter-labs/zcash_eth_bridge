@@ -105,13 +105,16 @@ impl Demo {
             .requestWithdrawal(U256::from(amount), to.into());
         let pending_tx = tx.send().await?;
         let receipt = pending_tx.get_receipt().await?;
-        tracing::info!("[ETH] Submitted withdrawal request, receipt: {receipt:?}");
+        tracing::info!(
+            "[ETH] Submitted withdrawal request, tx hash: {:?}",
+            receipt.transaction_hash
+        );
         Ok(receipt.block_number.unwrap())
     }
 }
 
-#[tokio::test]
-async fn e2e_demo() -> anyhow::Result<()> {
+#[tokio::main]
+async fn main() -> anyhow::Result<()> {
     tracing_subscriber::fmt()
         .with_env_filter(
             EnvFilter::builder()
@@ -151,13 +154,12 @@ async fn e2e_demo() -> anyhow::Result<()> {
     let zcash_pk = zcash_receiver_wallet.derive_key(0, 0);
     tracing::info!("Withdrawing funds to Zcash address: {}", zcash_pk.address());
 
-    tracing::info!(
-        "Existing address UTXOs: {:?}",
-        demo.tze_sender
-            .client
-            .get_address_utxos(zcash_pk.address().to_string())
-            .await?
-    );
+    let start_utxos = demo
+        .tze_sender
+        .client
+        .get_address_utxos(zcash_pk.address().to_string())
+        .await?;
+    tracing::info!("Existing address UTXOs: {start_utxos:?}");
 
     tracing::info!("Submitting Ethereum->Zcash withdrawal");
     let withdraw_block = demo
@@ -178,14 +180,21 @@ async fn e2e_demo() -> anyhow::Result<()> {
         .await?;
     tracing::info!("Final WZEC balance: {final_balance}");
 
-    tokio::time::sleep(std::time::Duration::from_secs(5)).await;
-    tracing::info!(
-        "Zcash address UTXOs after withdrawal: {:?}",
-        demo.tze_sender
+    let mut final_utxos = demo
+        .tze_sender
+        .client
+        .get_address_utxos(zcash_pk.address().to_string())
+        .await?;
+    // Looks like `zebra` requires some time to actually index the new UTXOs
+    while final_utxos.len() == start_utxos.len() {
+        tokio::time::sleep(std::time::Duration::from_millis(250)).await;
+        final_utxos = demo
+            .tze_sender
             .client
             .get_address_utxos(zcash_pk.address().to_string())
-            .await?
-    );
+            .await?;
+    }
+    tracing::info!("Zcash address UTXOs after withdrawal: {final_utxos:?}");
 
     Ok(())
 }

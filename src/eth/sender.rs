@@ -68,7 +68,7 @@ impl EthSender {
         let tx = self.bridge_contract.submitStateUpdate(state_update);
         let pending_tx = tx.send().await?;
         let receipt = pending_tx.get_receipt().await?;
-        tracing::info!("[ETH] Submitted state update, receipt: {receipt:?}");
+        tracing::debug!("[ETH] Submitted state update, receipt: {receipt:?}");
 
         Ok(())
     }

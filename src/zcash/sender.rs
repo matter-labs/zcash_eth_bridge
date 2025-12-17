@@ -85,7 +85,7 @@ impl TzeSender {
 
         let tze_output = tx.tze_bundle().unwrap().vout[0].clone();
         let hash = self.client.send_raw_transaction(tx).await.unwrap().hash();
-        tracing::info!("[tze create] Tx: {tx:?}");
+        tracing::debug!("[tze create] Tx: {tx:?}");
 
         // TZE outpoints come after transparent outputs, so index 1.
         let outpoint = Self::outpoint(&hash, 1);
@@ -116,7 +116,7 @@ impl TzeSender {
 
         let res = self.finish_tx(builder.txn_builder, fee).await?;
         let tx = res.transaction();
-        tracing::info!("[tze deposit] Tx: {tx:?}");
+        tracing::debug!("[tze deposit] Tx: {tx:?}");
 
         let tze_output = tx.tze_bundle().unwrap().vout[0].clone();
         let hash = self.client.send_raw_transaction(tx).await.unwrap().hash();
@@ -149,7 +149,7 @@ impl TzeSender {
 
         let res = self.finish_tx(builder.txn_builder, fee).await?;
         let tx = res.transaction();
-        tracing::info!("[tze init stf] Tx: {tx:?}");
+        tracing::debug!("[tze init stf] Tx: {tx:?}");
 
         let tze_output = tx.tze_bundle().unwrap().vout[0].clone();
         let hash = self.client.send_raw_transaction(tx).await.unwrap().hash();
@@ -215,7 +215,7 @@ impl TzeSender {
 
         let res = self.finish_tx(builder.txn_builder, fee).await?;
         let tx = res.transaction();
-        tracing::info!("[tze progress stf] Tx: {tx:?}");
+        tracing::debug!("[tze progress stf] Tx: {tx:?}");
 
         let tze_output = tx.tze_bundle().unwrap().vout[0].clone();
         let hash = self.client.send_raw_transaction(tx).await.unwrap().hash();
@@ -265,7 +265,7 @@ impl TzeSender {
 
     pub async fn deploy(&mut self) -> anyhow::Result<(tze::OutPoint, TzeOut)> {
         let (create_outpoint, create_tze_output) = self.send_tze_create(50_000).await?;
-        tracing::info!(
+        tracing::debug!(
             "[tze create] hash: {}, output: {:?}",
             create_outpoint.txid(),
             create_tze_output
@@ -275,7 +275,7 @@ impl TzeSender {
         let (stf_tze_outpoint, stf_tze_output) = self
             .initialize_tze_stf(50_000, (create_outpoint, create_tze_output))
             .await?;
-        tracing::info!(
+        tracing::debug!(
             "[tze stf init] hash: {}, output: {:?}",
             stf_tze_outpoint.txid(),
             stf_tze_output

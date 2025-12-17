@@ -1,6 +1,5 @@
 use std::time::Duration;
 
-use tracing::level_filters::LevelFilter;
 use tracing_subscriber::EnvFilter;
 use zcash_eth_bridge::eth::sender::EthSender;
 use zcash_eth_bridge::types::StateUpdate;
@@ -40,7 +39,7 @@ async fn main() -> anyhow::Result<()> {
     tracing_subscriber::fmt()
         .with_env_filter(
             EnvFilter::builder()
-                .with_default_directive(LevelFilter::INFO.into())
+                .with_default_directive("zcash_eth_bridge=debug".parse().unwrap())
                 .from_env_lossy(),
         )
         .init();
@@ -79,7 +78,7 @@ async fn main() -> anyhow::Result<()> {
             continue;
         }
 
-        tracing::warn!(
+        tracing::info!(
             "Processing blocks ZEC {}-{}, ETH {}-{}",
             start_block_zcash,
             current_block_zcash,
@@ -120,26 +119,26 @@ async fn main() -> anyhow::Result<()> {
         };
 
         if !state_update.eth_to_zec_transfers.is_empty() {
-            tracing::warn!(
+            tracing::info!(
                 "Processing {} ETH -> ZEC transfers in blocks {}-{}",
                 state_update.eth_to_zec_transfers.len(),
                 start_block_eth,
                 current_block_eth
             );
             for t in &state_update.eth_to_zec_transfers {
-                tracing::warn!("  {:?}", t);
+                tracing::info!("  {:?}", t);
             }
         }
 
         if !state_update.zec_to_eth_transfers.is_empty() {
-            tracing::warn!(
+            tracing::info!(
                 "Processing {} ZEC -> ETH transfers in blocks {}-{}",
                 state_update.zec_to_eth_transfers.len(),
                 start_block_zcash,
                 current_block_zcash
             );
             for t in &state_update.zec_to_eth_transfers {
-                tracing::warn!("  {:?}", t);
+                tracing::info!("  {:?}", t);
             }
         }
 

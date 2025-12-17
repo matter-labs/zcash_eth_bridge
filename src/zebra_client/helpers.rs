@@ -27,7 +27,8 @@ pub async fn spendable_coinbase_txid(
 ) -> Result<TxId, anyhow::Error> {
     if target_height < MIN_TRANSPARENT_COINBASE_MATURITY {
         panic!(
-            "At height {target_height} there are no spendable coinbase transactions, minimum maturity is {MIN_TRANSPARENT_COINBASE_MATURITY}"
+            "At height {target_height} there are no spendable coinbase transactions, minimum maturity is {MIN_TRANSPARENT_COINBASE_MATURITY}. \
+            Please wait a bit until zebra mines more blocks and run the binary again."
         );
     }
 
